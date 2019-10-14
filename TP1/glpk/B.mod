@@ -5,8 +5,8 @@ var Msilv >= 0;
 var Sgold >= 0;
 var Ssilv >= 0;
 var P>=0;
-var Pgold>=0;
-var Psilv>=0;
+var Pgold, integer, >=0;
+var Psilv, integer, >=0;
 var Ingresos>=0;
 var Egresos>=0;
 
