@@ -1,0 +1,225 @@
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage[left=20mm, right=20mm,top=20mm]{geometry}
+\usepackage[authoryear,round]{natbib}
+\usepackage[automark]{scrpage2}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{enumerate}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{caption}
+
+\graphicspath{ {graficos/} }
+
+\begin{document}
+
+
+\thispagestyle{empty}
+\title{TP1 - Modelos y Optimización I}
+
+		\begin{figure}[H]
+	\centering
+    \includegraphics[width=0.15\textwidth]{logo.jpg}
+   \end{figure}
+
+
+	\begin{center}
+		\huge{\textsc{Universidad de Buenos Aires}}\\
+		\huge{\textsc{Facultad de Ingeniería}}\\
+		\vspace*{3mm}
+		\large{ 2\textsuperscript{do} Cuatrimestre 2019}
+	\end{center}
+
+	\vspace*{20mm}
+
+	\begin{center}
+		\huge{\underline{\textsc{Modelos y Optimización I (71.14)}}}\\
+	\end{center}
+
+
+
+	\begin{large}
+
+	\begin{tabbing}
+		\hspace{34mm} \= \+
+		\textsc{\bf{\Large{Informe Trabajo Práctico 1}}}\\
+		\textsc{Fecha:} {\today}\\
+	\end{tabbing}
+
+\vspace{20mm}
+
+    \begin{tabbing}
+    	\hspace{20mm} \= \+
+        \textsc{Integrantes:}\\
+    \end{tabbing}
+
+	\end{large}
+
+\vspace{-7mm}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+	\hline
+	\textbf{Apellido y Nombre} & \textbf{Padrón} & \textbf{Correo Electrónico}  \\
+
+    \hline
+     Ferres, Julian &101483 & julianferres@gmail.com \\
+    \hline
+    ---- & ----- & cyntgamarra@gmail.com\\
+	\hline
+    Loguercio, Sebastian & 100517 & seba21log@gmail.com  \\
+    \hline
+
+
+ \end{tabular}
+\end{center}
+
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+
+
+\newpage
+\setcounter{page}{1}
+
+\section{Parte A}
+
+\subsection{Análisis}
+
+\subsection{Objetivo}
+Alaska y Hawaii
+\subsection{Hipótesis}
+Las hipotesis impuestas son las siguientes:
+
+\begin{itemize}
+	\item La heladera dura todo el viaje, por lo que habrá que comprar solo una.
+\end{itemize}
+
+
+\subsection{Modelo de programación lineal continua}
+\subsection{Constantes}
+
+\begin{itemize}
+	\item $d_{ij}$: Distancia entre la ciudad $i$ y la ciudad $j$ (en km).
+	%Precio nafta
+
+
+\end{itemize}
+
+\subsubsection{Variables}
+\begin{itemize}
+	\item $U_{i}$ Orden en el que la capital i fue visitada.
+
+	\item $Y_{ij}$ El camino entre la capital $i$ y la $j$ está en el tour.
+	\item $D$: Distancia recorrida (en km).
+	% Ver como definir las variables del costo diferido en la carpeta
+	\item $DES_j$: Descansan 2 dias en la ciudad $j$
+	%Ver si lo queremos entre cada ij o en funcion de D --> \item $E_{ij}$: Cantidad de veces que se detienen a estirarse
+	\item $H$: Compro la heladera (binaria).
+	\item $Agua$: Precio de una botella de agua (usd), entera $Agua \in \{2,3\}$
+
+\end{itemize}
+
+\subsubsection{Ecucaciones}
+
+$ D = \sum_{i}\sum_{j} d_{ij} Y_{ij}$
+
+
+\subsection{Modelo en computadora}
+\subsection{Resolución}
+
+\subsection{Análisis de la solución}
+
+\newpage
+\section{Parte B}
+
+\subsection{Análisis}
+
+\subsection{Objetivo}
+Determinar la cantidad de pases Gold, pases Silver y paquetes de merchandising a vender para obtener la mayor ganancia posible en un periodo determinado.
+
+\subsection{Hipótesis}
+
+\begin{itemize}
+    \item Todos los pases se venden.
+    \item Las entradas de protocolo son Silver o Gold o cualquiera??
+    \item Dice ``un par'' de entradas de protocolo. Osea 2?
+    \item Los 100 pases Gold al dueño del predio generan ganancia?
+
+\end{itemize}
+
+
+\subsection{Modelo de programación lineal continua}
+\subsubsection{Variables}
+
+$M_{gold} =$ Cantidad de metros cuadrados dedicados a ubicaciones Gold.\\
+
+$M_{silv} =$ Cantidad de metros cuadrados dedicados a ubicaciones Silver.\\
+
+$S_{gold} =$ Cantidad de pases Gold a vender.\\
+
+$S_{silv} =$ Cantidad de pases Silver a vender.\\
+
+$P =$ Cantidad de paquetes de merchandisign comprados.\\
+
+$P_{gold} =$ Cantidad de paquetes comprados destinados a ubicaciones Gold.\\
+
+$P_{silv} =$ Cantidad de paquetes comprados destinados a ubicaciones Silver.\\
+
+
+\subsubsection{Ecuaciones}
+
+\begin{itemize}
+    \item 8000 metros cuadrados en total disponibles:
+    $$ M_{gold} + M_{silv}  \leq 8000\,m²$$
+
+    \item Relación pases Gold y metros cuadrados:
+    $$ S_{gold} = \tfrac{1\: pase}{m²} \cdot M_{gold} $$
+
+    \item Relación pases Silver y metros cuadrados:
+    $$ S_{silv} = \tfrac{2\: pases}{m²} \cdot M_{silv} $$
+
+    \item 100 pases Golds al dueño del predio: (se cobran ??)
+    $$ S_{gold} \geq 100\,pases $$
+
+    \item 500 pases Silver vendidos para pagar la reserva del predio:
+    $$ S_{silv} \geq 500\: pases$$
+
+    \item Paquetes de merchandising:
+    $$ P = P_{gold} + P_{silv} $$
+
+    \item Se pueden comprar hasta 800 paquetes:
+    $$ P \leq 800\: paquetes $$
+
+    \item Un paquete cubre hasta 20 personas que compraron un pase Silver:
+    $$ P_{silv} \leq \tfrac{1\: paquete} {20\: pases} \cdot S_{silv}$$
+
+    \item Un paquete cubre hasta 8 personas que compraron un pase Gold:
+    $$ P_{gold} \leq \tfrac{1\: paquete} {8\: pases} \cdot S_{gold}$$
+
+
+\end{itemize}
+
+\subsubsection{Funcional}
+
+
+\subsection{Modelo en computadora}
+
+\subsection{Resolución}
+
+\subsection{Análisis de la solución}
+
+
+
+\end{document}

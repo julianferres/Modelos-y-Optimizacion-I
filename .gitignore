@@ -1,0 +1,8 @@
+#Saco los pychache y los .pyc
+*.pyc
+__pycache__
+*.toc
+*.aux
+*.out
+*.synctex.gz
+*.log
