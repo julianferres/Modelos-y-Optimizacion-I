@@ -20,8 +20,8 @@ var D >=0;
 # DES_j : Vale 1 si descansan 2 dias en la ciudad j.
 var DES{j in CIUDADES} >=0, binary;
 
-# D: Cantidad de veces totales que se detienen a estirarse.
-var D >=0;
+# E: Cantidad de veces totales que se detienen a estirarse.
+var E >=0;
 
 # H : Vale 1 si compran la heladera.
 var H >=0, binary;
@@ -31,17 +31,17 @@ var Agua >=0;
 
 #Hidr1: Cantidad de veces que se detienen y se hidratan tomando un agua si compran
 la heladera.
-var Hidr0 >=0, binary;
+var Hidr0 >=0;
 
 #Hidr0: Cantidad de veces que se detienen y se hidratan tomando un agua si no compran
 la heladera.
-var Hidr1 >=0, binary;
+var Hidr1 >=0;
 
 # Hidr: Cantidad de veces que se detienen y se hidratan.
 var Hidr >=0;
 
 # K : Cantidad de Km recorridos hasta ciudad i.
-var K{i in CIUDADES} >=0, binary;
+var K{i in CIUDADES} >=0;
 
 # XI_i : Vale 1 si la ciudad i está en el recorrido entre 0 y 10000 Km del viaje (si K_i <= 10000).
 var XI{i in CIUDADES} >=0, binary;
@@ -55,10 +55,10 @@ var XIII{i in CIUDADES} >=0, binary;
 # XIV_i : Vale 1 si la ciudad i está en el recorrido mayor a 30000 Km del viaje (si K_i >= 30000).
 var XIV{i in CIUDADES} >=0, binary;
 
-#U_ij, bivalente que vale 1 si si se pasó por la ciudad i antes que j(U_i<= U_j, i <> j).
-var U{i in CIUDADES, j in CIUDADES: i<>j} >= 0, integer;
+#A_ij, bivalente que vale 1 si si se pasó por la ciudad i antes que j(U_i<= U_j, i <> j).
+var A{i in CIUDADES, j in CIUDADES: i<>j} >= 0, binary;
 
-#A_ijk, bivalente que vale 1 si se hizo el viaje de i a j(i <> j) y además se pasó por j antes que k(es decir, A_jk = 1 y Y_ij = 1).
+#V_ijk, bivalente que vale 1 si se hizo el viaje de i a j(i <> j) y además se pasó por j antes que k(es decir, A_jk = 1 y Y_ij = 1).
 var A{i in CIUDADES, j in CIUDADES, k in CIUDADES: i<>j and j<>k} >= 0, binary;
 
 #ANDI_i: Vale 1 si XI_i y DES_i valen 1(es decir, si la ciudad i está en el primer tramo del recorrido y descansaron 2 días en esa ciudad).
@@ -144,7 +144,7 @@ s.t. visitaIantesJ{i in CIUDADES, j in CIUDADES: i<>j}: -M*(1 - A[i,j]) <= U[j] 
 s.t. ciudDistA{i in CIUDADES, j in CIUDADES, k in CIUDADES: i<>j and j<>k} :2 * V[i,j,k]= A[i,j] + Y[i,j];
 
 #Cantidad de Km recorridos hasta ciudad i, para todo k:
-s.t. kmHastaI{k in CIUDADES}: k[k]= sum{i in CIUDADES, j in CIUDADES k in CIUDADES: i<>j and j<>k } V[i,j,k] * DISTANCIA[i,j];
+s.t. kmHastaI{k in CIUDADES}: K[k] = sum{i in CIUDADES, j in CIUDADES k in CIUDADES: i<>j and j<>k } V[i,j,k] * DISTANCIA[i,j];
 
 #Definicion X_i. Para toda i ciudad:
 s.t. xIguales1{i in CIUDADES}:XI[i] + XII[i] + XIII[i] + XIV[i] = 1;
@@ -154,10 +154,10 @@ s.t. xTramo3{i in CIUDADES}: XIII[i] * 20000 + (1 - XIII[i] ) * 30000 <= K[i] <=
 s.t. xTramo4{i in CIUDADES}: XIV[i] * 30000 <= K[i];
 
 #Cantidad de días que tardan en cada intervalo del recorrido, Siendo i las ciudades:
-s.t. C1:C1 = sum{i in CIUDADES XI[i] * XI[i];  
-s.t. C2:C2 = sum{i in CIUDADES XII[i] * XII[i]; 
-s.t. C3:C3 = sum{i in CIUDADES XIII[i] * XIII[i]; 
-s.t. C4:C4 = sum{i in CIUDADES XIV[i] * XIV[i]; 
+s.t. C1:C1 = sum{i in CIUDADES}: XI[i] + ANDI[i];  
+s.t. C2:C2 = sum{i in CIUDADES}: XII[i] + ANDII[i]; 
+s.t. C3:C3 = sum{i in CIUDADES}: XIII[i] + ANDIII[i]; 
+s.t. C4:C4 = sum{i in CIUDADES}: XIV[i] + ANDIV[i]; 
 
 
 end;
