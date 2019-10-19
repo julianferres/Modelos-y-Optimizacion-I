@@ -5,7 +5,7 @@ set CIUDADES;
 
 #Parámetros o constantes:
 #Las distancias en km. de ir desde la ciudad i hasta la j.
-param DISTANCIA{i in CIUDADES, j in CIUDADES: i<>j}; 
+param DISTANCIA{i in CIUDADES, j in CIUDADES: i<>j};
 
 #Variables:
 #U_i orden de secuencia en que la ciudad i es visitada (excluyendo el punto de partida).
@@ -29,12 +29,10 @@ var H >=0, binary;
 # Agua: Precio de todas las botellas de agua.
 var Agua >=0;
 
-#Hidr1: Cantidad de veces que se detienen y se hidratan tomando un agua si compran
-la heladera.
+#Hidr1: Cantidad de veces que se detienen y se hidratan tomando un agua si compran la heladera.
 var Hidr0 >=0;
 
-#Hidr0: Cantidad de veces que se detienen y se hidratan tomando un agua si no compran
-la heladera.
+#Hidr0: Cantidad de veces que se detienen y se hidratan tomando un agua si no compran la heladera.
 var Hidr1 >=0;
 
 # Hidr: Cantidad de veces que se detienen y se hidratan.
@@ -59,7 +57,7 @@ var XIV{i in CIUDADES} >=0, binary;
 var A{i in CIUDADES, j in CIUDADES: i<>j} >= 0, binary;
 
 #V_ijk, bivalente que vale 1 si se hizo el viaje de i a j(i <> j) y además se pasó por j antes que k(es decir, A_jk = 1 y Y_ij = 1).
-var A{i in CIUDADES, j in CIUDADES, k in CIUDADES: i<>j and j<>k} >= 0, binary;
+var V{i in CIUDADES, j in CIUDADES, k in CIUDADES: i<>j and j<>k} >= 0, binary;
 
 #ANDI_i: Vale 1 si XI_i y DES_i valen 1(es decir, si la ciudad i está en el primer tramo del recorrido y descansaron 2 días en esa ciudad).
 var ANDI{i in CIUDADES} >=0, binary;
@@ -95,13 +93,13 @@ var Comida >=0;
 minimize z: Habitaciones + Nafta + CostoAgua + Comida; 
 
 #Costo por las habitaciones
-s.t. costoHab :Habitaciones = 50 * sum{i in CIUDADES, j in CIUDADES: i<>j } Y[i,j] + 50 * sum{j in CIUDADES: i<>j } DES[i,j] ; 
+s.t. costoHab :Habitaciones = 50 * sum{i in CIUDADES, j in CIUDADES: i<>j } Y[i,j] + 50 * sum{j in CIUDADES } DES[j] ; 
       
 #Nafta gastada según la cantidad de kilómetros hecho
 s.t. costoNafta :Nafta = 2 * D ;
 
 #Costo total del agua
-s.t. costoAgua :costoAgua = 60 * H + Agua;
+s.t. costAgua :CostoAgua = 60 * H + Agua;
 
 #Costo total por la comida
 s.t. comida :Comida = 30 * C1 + 25 * C2 + 20 * C3 + 15 * C4 ;
@@ -120,16 +118,20 @@ s.t. saleDeI{i in CIUDADES} :sum{j in CIUDADES:i<>j} Y[i,j] = 1;
 s.t. llegaAJ{j in CIUDADES}:sum{i in CIUDADES:i<>j} Y[i,j] = 1;
 
 #Si viajaron mas de 250Km de corrido, descansan 2 dias en la ciudad. Siendo M un número suficientemente grande, cambiarlo por un valor para correrlo:
-s.t. viajeMasDe250{j in CIUDADES}: 250 * DES[j] <= sum{i in CIUDADES:i<>j} Y[i,j] * DISTANCIA[i,j] <= (1 - DES[j] )250 + M* DES[j];
+s.t. viajeMasDe250{j in CIUDADES}: 250 * DES[j] <= sum{i in CIUDADES:i<>j} Y[i,j] * DISTANCIA[i,j];
+s.t. viajeMasDe250_1{j in CIUDADES}: sum{i in CIUDADES:i<>j} Y[i,j] * DISTANCIA[i,j] <= (1 - DES[j] ) * 250 + 10000 * DES[j];
+
 
 #Cantidad de veces que se detienen a hidratarse:
 s.t. cantHidratacion:Hidr = Hidr0 + Hidr1;
 
 #Cantidad de veces que se detienen a hidratarse si compran la heladera. Siendo M un número suficientemente grande:
-s.t. hidraConHelad:0.1 * H <= Hidr1 <= H * M;
+s.t. hidraConHelad: 0.1 * H <= Hidr1;
+s.t. hidraConHelad_1: Hidr1 <= H * 10000;
 
 #Cantidad de veces que se detienen a hidratarse si no compran la heladera: Siendo M un número suficientemente grande:
-s.t. hidraSinHelad:0.1 * (1 - H )<= Hidr0 <= (1 - H ) * M;
+s.t. hidraSinHelad: 0.1 * (1 - H )<= Hidr0 ;
+s.t. hidraSinHelad_1: Hidr0 <= (1 - H ) * 10000;
 
 #Cada dos veces que se detienen a estirar, toman una botella de agua:
 s.t. estirarse2veces:Hidr = E * 0.5;
@@ -138,26 +140,33 @@ s.t. estirarse2veces:Hidr = E * 0.5;
 s.t. precioAgua: Agua = 2 * Hidr1 + 3 * Hidr0;
 
 #Definición A_ij (se visito i antes que j. Siendo $M$ un número suficientemente grande:
-s.t. visitaIantesJ{i in CIUDADES, j in CIUDADES: i<>j}: -M*(1 - A[i,j]) <= U[j] - U[i] <= M * A[i,j];
+s.t. visitaIantesJ{i in CIUDADES, j in CIUDADES: i<>j}: -10000*(1 - A[i,j]) <= U[j] - U[i];
+s.t. visitaIantesJ_1{i in CIUDADES, j in CIUDADES: i<>j}: U[j] - U[i] <= 10000 * A[i,j];
 
 #Definición V_ijk:
 s.t. ciudDistA{i in CIUDADES, j in CIUDADES, k in CIUDADES: i<>j and j<>k} :2 * V[i,j,k]= A[i,j] + Y[i,j];
 
 #Cantidad de Km recorridos hasta ciudad i, para todo k:
-s.t. kmHastaI{k in CIUDADES}: K[k] = sum{i in CIUDADES, j in CIUDADES k in CIUDADES: i<>j and j<>k } V[i,j,k] * DISTANCIA[i,j];
+s.t. kmHastaI{k in CIUDADES}: K[k] = sum{i in CIUDADES, j in CIUDADES: i<>j and j<>k } V[i,j,k] * DISTANCIA[i,j];
 
 #Definicion X_i. Para toda i ciudad:
 s.t. xIguales1{i in CIUDADES}:XI[i] + XII[i] + XIII[i] + XIV[i] = 1;
-s.t. xTramo1{i in CIUDADES}: (1 - XI[i] ) * 10000 <= K[i] <= XI[i] * 10000;
-s.t. xTramo2{i in CIUDADES}: XII[i] * 10000 + (1 - XII[i] ) * 20000 <= K[i] <= XII[i] * 20000;
-s.t. xTramo3{i in CIUDADES}: XIII[i] * 20000 + (1 - XIII[i] ) * 30000 <= K[i] <= XIII[i] * 30000;
+
+s.t. xTramo1{i in CIUDADES}: (1 - XI[i] ) * 10000 <= K[i];
+s.t. xTramo1_1{i in CIUDADES}: K[i] <= XI[i] * 10000;
+
+s.t. xTramo2{i in CIUDADES}: XII[i] * 10000 + (1 - XII[i] ) * 20000 <= K[i];
+s.t. xTramo2_2{i in CIUDADES}: K[i] <= XII[i] * 20000;
+
+s.t. xTramo3{i in CIUDADES}: XIII[i] * 20000 + (1 - XIII[i] ) * 30000 <= K[i];
+s.t. xTramo3_3{i in CIUDADES}: K[i] <= XIII[i] * 30000;
+
 s.t. xTramo4{i in CIUDADES}: XIV[i] * 30000 <= K[i];
 
 #Cantidad de días que tardan en cada intervalo del recorrido, Siendo i las ciudades:
-s.t. C1:C1 = sum{i in CIUDADES}: XI[i] + ANDI[i];  
-s.t. C2:C2 = sum{i in CIUDADES}: XII[i] + ANDII[i]; 
-s.t. C3:C3 = sum{i in CIUDADES}: XIII[i] + ANDIII[i]; 
-s.t. C4:C4 = sum{i in CIUDADES}: XIV[i] + ANDIV[i]; 
-
+s.t. recorridoC1:C1 = sum{i in CIUDADES} (XI[i] + ANDI[i]);
+s.t. recorridoC2:C2 = sum{i in CIUDADES} (XII[i] + ANDII[i]); 
+s.t. recorridoC3:C3 = sum{i in CIUDADES} (XIII[i] + ANDIII[i]); 
+s.t. recorridoC4:C4 = sum{i in CIUDADES} (XIV[i] + ANDIV[i]); 
 
 end;
