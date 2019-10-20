@@ -109,7 +109,7 @@ var Comida >=0;
 minimize z: Habitaciones + Nafta + CostoAgua + 2*Comida; 
 
 #Costo por las habitaciones
-s.t. costoHab :Habitaciones = 50 * sum{i in CIUDADES, j in CIUDADES: i<>j } Y[i,j] + 50 * sum{j in CIUDADES } DES[j] ; 
+s.t. costoHab :Habitaciones = 50 * sum{i in CIUDADES, j in CIUDADES: i<>j }(Y[i,j]) + 50 * sum{j in CIUDADES }(DES[j]) ; 
       
 #Nafta gastada según la cantidad de kilómetros hecho
 s.t. costoNafta :Nafta = 2 * D ;
@@ -124,7 +124,7 @@ s.t. comida :Comida = 30 * C1 + 25 * C2 + 20 * C3 + 15 * C4 ;
 s.t. cantDeKm :D = sum{i in CIUDADES, j in CIUDADES: i<>j } (Y[i,j] * DISTANCIA[i,j]); 
 
 #Secuencia para evitar subtours
-s.t. orden{i in CIUDADES, j in CIUDADES: i<>j}:
+s.t. orden{i in CIUDADES, j in CIUDADES: i<>j and i<>'0' and j<>'0'}:
 U[i] - U[j] + card(CIUDADES) * Y[i,j] <= card(CIUDADES) - 1;
 
 #Se sale de todas las ciudades, pasando una vez por cada una:
@@ -135,7 +135,7 @@ s.t. llegaAJ{j in CIUDADES}:sum{i in CIUDADES:i<>j} (Y[i,j]) = 1;
 
 #Si viajaron mas de 250Km de corrido, descansan 2 dias en la ciudad. Siendo M un número suficientemente grande, cambiarlo por un valor para correrlo:
 
-s.t. viajeMasDe250{j in CIUDADES}: 250 * DES[j] <= sum{i in CIUDADES:i<>j} Y[i,j] * DISTANCIA[i,j];
+s.t. viajeMasDe250{j in CIUDADES}: 250 * DES[j] <= sum{i in CIUDADES:i<>j} (Y[i,j] * DISTANCIA[i,j]);
 s.t. viajeMasDe250_1{j in CIUDADES}: sum{i in CIUDADES:i<>j} (Y[i,j] * DISTANCIA[i,j]) <= (1 - DES[j] ) * 250 + M * DES[j];
 
 
@@ -143,11 +143,11 @@ s.t. viajeMasDe250_1{j in CIUDADES}: sum{i in CIUDADES:i<>j} (Y[i,j] * DISTANCIA
 s.t. cantHidratacion:Hidr = Hidr0 + Hidr1;
 
 #Cantidad de veces que se detienen a hidratarse si compran la heladera. Siendo M un número suficientemente grande:
-s.t. hidraConHelad: H <= Hidr1;
+s.t. hidraConHelad: 0.01*H <= Hidr1;
 s.t. hidraConHelad_1: Hidr1 <= H * M;
 
 #Cantidad de veces que se detienen a hidratarse si no compran la heladera: Siendo M un número suficientemente grande:
-s.t. hidraSinHelad: (1 - H )<= Hidr0 ;
+s.t. hidraSinHelad: 0.01*(1 - H )<= Hidr0 ;
 s.t. hidraSinHelad_1: Hidr0 <= (1 - H ) * M;
 
 #Cantidad de veces que se detienen a estirar:
@@ -182,10 +182,10 @@ s.t. xTramo1_1{i in CIUDADES}: KI[i] <= XI[i] * 10000;
 s.t. xTramo2{i in CIUDADES}: XII[i] * 10000.001 <= KII[i];
 s.t. xTramo2_2{i in CIUDADES}: KII[i] <= XII[i] * 20000;
 
-s.t. xTramo3{i in CIUDADES}: XIII[i] * 2000.001 <= KIII[i];
+s.t. xTramo3{i in CIUDADES}: XIII[i] * 20000.001 <= KIII[i];
 s.t. xTramo3_3{i in CIUDADES}: KIII[i] <= XIII[i] * 30000;
 
-s.t. xTramo4{i in CIUDADES}: XIV[i] * 3000.001 <= KIV[i];
+s.t. xTramo4{i in CIUDADES}: XIV[i] * 30000.001 <= KIV[i];
 s.t. xTramo4_4{i in CIUDADES}: KIV[i] <= XIV[i] * M;
 
 
@@ -203,6 +203,8 @@ s.t. andIV{i in CIUDADES}: 2*ANDIV[i] = XIV[i] + DES[i];
 s.t. recorridoC1:C1 = sum{i in CIUDADES} (XI[i] + ANDI[i]);
 s.t. recorridoC2:C2 = sum{i in CIUDADES} (XII[i] + ANDII[i]); 
 s.t. recorridoC3:C3 = sum{i in CIUDADES} (XIII[i] + ANDIII[i]); 
-s.t. recorridoC4:C4 = sum{i in CIUDADES} (XIV[i] + ANDIV[i]); 
+s.t. recorridoC4:C4 = sum{i in CIUDADES} (XIV[i] + ANDIV[i]);
+
+solve;
 
 end;
