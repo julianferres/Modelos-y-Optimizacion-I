@@ -3,7 +3,7 @@
 # Se ejecuta con:
 # 	python3 parser.py
 
-X = 13 # cantidad de ciudades
+X = 5 # cantidad de ciudades
 M = 1000000 # cte M
 eps = 0.000000000000001 #cte epsilon
 
